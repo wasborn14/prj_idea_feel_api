@@ -22,11 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-upk8t2q(&7ckw8_*(+1n$qyd8)zc5#q_tut8_dd9n)b5k%1lp@'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -40,9 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 追加分(apiは自分で作成したもの)
+    'rest_framework',
+    'api.apps.ApiConfig',
+    'corsheaders',
+    'djoser',
 ]
 
 MIDDLEWARE = [
+    # corsheaderを使うために追加
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,6 +57,31 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# アクセス許可
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "https://idea-project-app.vercel.app"
+]
+
+# simple_jwtの設定
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+}
+
+# defaultでjwttokenを使うよう設定
+REST_FRAMEWORK = {
+    # viewの制限
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # 認証の方法
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
 
 ROOT_URLCONF = 'idea_api.urls'
 
@@ -76,11 +107,11 @@ WSGI_APPLICATION = 'idea_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# 本番環境のDatabaseのURLがない時はsqlite3を使用する
+default_dburl = 'sqlite:///' + str(BASE_DIR / "db.sqlite3")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
 }
 
 
@@ -108,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -121,6 +152,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# デプロイする時、collect staticで一個のフォルダにかき集める
+# その時のフォルダの場所を指定する
+STATIC_ROOT = str(BASE_DIR / 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
