@@ -13,7 +13,7 @@ CORS_ORIGIN_WHITELIST = [
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'myproject',
+    'NAME': 'database1',
     'USER': 'wasborn',
     'PASSWORD': 'password',
     'HOST': 'localhost',
