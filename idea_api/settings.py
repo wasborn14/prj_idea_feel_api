@@ -43,7 +43,13 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'corsheaders',
     'djoser',
+
+    # カスタムユーザー用設定
+    'users',
 ]
+
+# 認証に用いるモデルの設定
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     # corsheaderを使うために追加
