@@ -1,4 +1,4 @@
-
+import os
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -127,7 +127,9 @@ STATIC_URL = '/static/'
 
 # デプロイする時、collect staticで一個のフォルダにかき集める
 # その時のフォルダの場所を指定する
-STATIC_ROOT = str(BASE_DIR / 'staticfiles')
+# 下記はローカルでは昔この設定だった問題があれば戻す
+# STATIC_ROOT = str(BASE_DIR / 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
