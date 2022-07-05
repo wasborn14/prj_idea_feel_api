@@ -25,9 +25,9 @@ class Department(models.Model):
 class User(AbstractBaseUser, PermissionsMixin):
     """ユーザー AbstractUserをコピペし編集"""
 
-    # uuidになっていたところをidに変更した
-    id = models.UUIDField(default=uuid_lib.uuid4,
-                            primary_key=True, editable=False)
+    # TODO: 本番ではuuidを利用できるように変更した方が良い
+    # id = models.UUIDField(default=uuid_lib.uuid4,
+    #                         primary_key=True, editable=False)
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
