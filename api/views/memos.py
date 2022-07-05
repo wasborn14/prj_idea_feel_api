@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view
 from api.utils import login_check
 from api.models import Memo
 
+memo_fields = ('id', 'title', 'content', 'created_at', 'updated_at','create_user') 
+
 """
 メモ一覧取得
 
@@ -16,7 +18,7 @@ throws:HttpResponseForbidden
 def index(request):
     login_check(request)
     # 作成者本人のメモのみ返す
-    memos = Memo.objects.all().filter(create_user=request.user.id).values('id', 'title', 'content', 'created_at', 'create_user')
+    memos = Memo.objects.all().filter(create_user=request.user.id).values(*memo_fields)
     return JsonResponse(list(memos), safe=False)
 
 """
@@ -29,7 +31,7 @@ throws:HttpResponseForbidden
 @api_view(['GET'])
 def show(request, memo_id):
     login_check(request)
-    memo = Memo.objects.all().filter(id=memo_id).values('id', 'title', 'content', 'created_at', 'create_user').first()
+    memo = Memo.objects.all().filter(id=memo_id).values(*memo_fields).first()
     # メモが存在しない場合
     if memo is None:
         return HttpResponseBadRequest()
@@ -57,8 +59,8 @@ def post(request):
             memo.created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.save()
-            # idや作成データを返すように変更したい
-            return HttpResponse()
+            response = {"id":memo.id}
+            return JsonResponse(response)
         else:
             return HttpResponseForbidden()
 
@@ -86,8 +88,8 @@ def update(request, memo_id):
             memo.content = request.data.get('content')
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.save()
-            # idや作成データを返すように変更したい
-            return HttpResponse()
+            response = {"id":memo.id}
+            return JsonResponse(response)
         else:
             return HttpResponseForbidden()
 
@@ -111,7 +113,6 @@ def delete(request, memo_id):
         if memo is None:
             return HttpResponseBadRequest()
         memo.delete()
-        # idや作成データを返すように変更したい
         return HttpResponse()
 
     except Exception as e:

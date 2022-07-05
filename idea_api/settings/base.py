@@ -51,7 +51,7 @@ MIDDLEWARE = [
 # simple_jwtの設定
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
 }
 
 # defaultでjwttokenを使うよう設定
