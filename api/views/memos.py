@@ -20,6 +20,8 @@ def index(request):
     # 作成者本人のメモのみ返す
     memos = Memo.objects.all().filter(create_user=request.user.id).values(*memo_fields).order_by('created_at').reverse()
     response = {"memoList":list(memos)}
+    if memos is None:
+        return JsonResponse([], safe=False)
     return JsonResponse(response, safe=False)
 
 """
