@@ -18,8 +18,9 @@ throws:HttpResponseForbidden
 def index(request):
     login_check(request)
     # 作成者本人のメモのみ返す
-    memos = Memo.objects.all().filter(create_user=request.user.id).values(*memo_fields)
-    return JsonResponse(list(memos), safe=False)
+    memos = Memo.objects.all().filter(create_user=request.user.id).values(*memo_fields).order_by('created_at').reverse()
+    response = {"memoList":list(memos)}
+    return JsonResponse(response, safe=False)
 
 """
 メモ詳細取得

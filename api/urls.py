@@ -19,10 +19,10 @@ urlpatterns = [
     # メモ関連
     path('memos/', memos.index, name='memos'),
     path('memos/create/', memos.post, name='memos-create'),
-    path('memos/<int:memo_id>', memos.show, name='memos-detail'),
+    path('memos/<int:memo_id>/', memos.show, name='memos-detail'),
     # TODO:post, putなどメソッドで変えられないのか確認
-    path('memos/<int:memo_id>/update', memos.update, name='memos-update'),
-    path('memos/<int:memo_id>/delete', memos.delete, name='memos-delete'),
+    path('memos/<int:memo_id>/update/', memos.update, name='memos-update'),
+    path('memos/<int:memo_id>/delete/', memos.delete, name='memos-delete'),
 
     # 元から設定していた内容
     path('list-post/', PostListView.as_view(), name='list-post'),
