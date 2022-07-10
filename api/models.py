@@ -29,5 +29,9 @@ class Memo(models.Model):
     # TODO:下記とこちらどちらが良いのか確認： create_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='作成者')
     create_user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name='作成者')
 
+    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, \
+        verbose_name='parent_id', related_name='child_memo')
+    icon_id = models.IntegerField(null=True, verbose_name='icon_id')
+
     def __str__(self):
         return str(self.id) + " - " + self.title
