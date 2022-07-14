@@ -1,11 +1,6 @@
 
-from requests import request
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 from api.models import Memo
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from rest_framework.fields import CurrentUserDefault
 
 class SubMemoListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +18,27 @@ class MemoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Memo
         fields = ['id', 'title', 'create_user', 'memolist']
+
+# class SubMemoListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title']
+
+# class MemoListSerializer(serializers.ModelSerializer):
+#     children = SubMemoListSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title', 'children']
+
+# class MemoSerializer(serializers.ModelSerializer):
+#     children = MemoListSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title', 'create_user', 'children']
+
+# class MemoListSerializer(serializers.ModelSerializer):
+#     memolist = MemoListSerializer()
+
+#     class Meta:
+#         model = Memo
+#         fields = ['memo_list']
