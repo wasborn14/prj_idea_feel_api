@@ -1,7 +1,7 @@
 from django.http import HttpResponseForbidden, JsonResponse
 from rest_framework.permissions import AllowAny
 from rest_framework import generics
-from api.serializers.memo_serializer import MemoSerializer
+from api.serializers.memo_serializer import MemoListSerializer
 
 from api.serializers.serializers import UserSerializer
 from ..models import Memo
@@ -63,8 +63,8 @@ class MemoListView(generics.ListAPIView):
     # prefetch_relatedがあればserializer複数なくても再帰的にできると思ったがうまくいっていないのでいらないかもしれない
     # いずれこちらのようにできるか検討：https://qiita.com/sin_tanaka/items/1d5932fd8e393f432651
     # queryset = Memo.objects.filter(Q(memos_id__isnull=True) | Q(memos_id__exact=0)).prefetch_related('memolist')
-    serializer_class = MemoSerializer
+    serializer_class = MemoListSerializer
 
     def get_queryset(self):
-        return Memo.objects.filter(Q(memos_id__isnull=True) | Q(memos_id__exact=0))\
-            .filter(create_user=self.request.user.id).prefetch_related('memolist')
+        return Memo.objects.filter(Q(parent__isnull=True) | Q(parent__exact=0))\
+            .filter(create_user=self.request.user.id).prefetch_related('memo_list')

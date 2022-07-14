@@ -10,8 +10,8 @@ class Memo(models.Model):
     create_user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name='作成者')
 
     # 再帰的リレーションに使用する
-    memos = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, \
-        verbose_name='parent_id', related_name='memolist')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, \
+        verbose_name='parent_id', related_name='memo_list')
 
     # 後に使用予定
     icon_id = models.IntegerField(null=True, verbose_name='icon_id')

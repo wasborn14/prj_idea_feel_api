@@ -2,43 +2,36 @@
 from rest_framework import serializers
 from api.models import Memo
 
-class SubMemoListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Memo
-        fields = ['id', 'title']
-
-class MemoListSerializer(serializers.ModelSerializer):
-    memolist = SubMemoListSerializer(many=True, read_only=True)
-    class Meta:
-        model = Memo
-        fields = ['id', 'title', 'memolist']
-
-class MemoSerializer(serializers.ModelSerializer):
-    memolist = MemoListSerializer(many=True, read_only=True)
-    class Meta:
-        model = Memo
-        fields = ['id', 'title', 'create_user', 'memolist']
-
 # class SubMemoListSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Memo
 #         fields = ['id', 'title']
 
 # class MemoListSerializer(serializers.ModelSerializer):
-#     children = SubMemoListSerializer(many=True, read_only=True)
+#     memo_list = SubMemoListSerializer(many=True, read_only=True)
 #     class Meta:
 #         model = Memo
-#         fields = ['id', 'title', 'children']
+#         fields = ['id', 'title', 'memo_list']
 
 # class MemoSerializer(serializers.ModelSerializer):
-#     children = MemoListSerializer(many=True, read_only=True)
+#     memo_list = MemoListSerializer(many=True, read_only=True)
 #     class Meta:
 #         model = Memo
-#         fields = ['id', 'title', 'create_user', 'children']
+#         fields = ['id', 'title', 'create_user', 'memo_list']
 
-# class MemoListSerializer(serializers.ModelSerializer):
-#     memolist = MemoListSerializer()
+class SecondSubMemoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Memo
+        fields = ['id', 'title']
 
-#     class Meta:
-#         model = Memo
-#         fields = ['memo_list']
+class FirstSubMemoListSerializer(serializers.ModelSerializer):
+    memo_list = SecondSubMemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'memo_list']
+
+class MemoListSerializer(serializers.ModelSerializer):
+    memo_list = FirstSubMemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'create_user', 'memo_list']
