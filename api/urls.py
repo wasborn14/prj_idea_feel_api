@@ -1,12 +1,13 @@
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
-from api.views.views import TaskViewSet, CreateUserView, TaskListView, TaskRetrieveView,\
+from api.views.views import MemoListViewSet, TaskViewSet, CreateUserView, TaskListView, TaskRetrieveView,\
     PostListView, PostRetrieveView
 from api.views import memos
 
 router = routers.DefaultRouter()
 router.register('tasks', TaskViewSet, basename='tasks')
+router.register('memolist', MemoListViewSet, basename='memolist')
 
 urlpatterns = [
     # ユーザー登録

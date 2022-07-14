@@ -1,7 +1,7 @@
-from requests import request
+from requests import request 
 from rest_framework import serializers, status
 from rest_framework.response import Response
-from .models import Task, Post, Memo
+from ..models import Task, Post
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework.fields import CurrentUserDefault

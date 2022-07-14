@@ -7,12 +7,19 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework.fields import CurrentUserDefault
 
-class MemoSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    create_user = serializers.ForeignKey(default=serializers.CurrentUserDefault())
-
+class SubMemoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Memo
-        fields = ('id', 'title', 'content', 'created_at', 'updated_at', 'create_user')
-        read_only_fields = ('id',)
+        fields = ['id', 'title']
+
+class MemoListSerializer(serializers.ModelSerializer):
+    memolist = SubMemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'memolist']
+
+class MemoSerializer(serializers.ModelSerializer):
+    memolist = MemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'create_user', 'memolist']
