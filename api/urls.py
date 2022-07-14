@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import include
 from api.views.views import MemoListView, CreateUserView
-from api.views import memos
+from api.views import memo
 
 
 # modelviewsetの登録例
@@ -19,12 +19,12 @@ urlpatterns = [
 
     # メモ関連
     # path('memos/', memos.index, name='memos'),
-    path('memos/', MemoListView.as_view(), name='memos'),
-    path('memos/create/', memos.post, name='memos-create'),
-    path('memos/<int:memo_id>/', memos.show, name='memos-detail'),
+    path('memo/list/', MemoListView.as_view(), name='memo_list'),
+    path('memo/create/', memo.post, name='memo_create'),
+    path('memo/<int:memo_id>/', memo.show, name='memos-detail'),
     # TODO:post, putなどメソッドで変えられないのか確認
-    path('memos/<int:memo_id>/update/', memos.update, name='memos-update'),
-    path('memos/<int:memo_id>/delete/', memos.delete, name='memos-delete'),
+    path('memo/<int:memo_id>/update/', memo.update, name='memo-update'),
+    path('memo/<int:memo_id>/delete/', memo.delete, name='memo-delete'),
 
     # 元から設定していた内容
     # path('list-post/', PostListView.as_view(), name='list-post'),
