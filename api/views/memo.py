@@ -79,7 +79,7 @@ def post(request):
             memo.title = request.data.get('title')
             memo.created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-            memo.parent = request.data.get('parent')
+            memo.parent_id = request.data.get('parent_id')
             # iconの変更は後に実装
             # memo.icon_id = 1
             memo.save()
