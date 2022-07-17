@@ -7,7 +7,7 @@ from api.utils import login_check
 from api.models import Memo
 
 ZERO = 0
-memo_fields = ('id', 'title', 'content', 'created_at', 'updated_at','create_user', 'parent', 'icon_id') 
+memo_fields = ('id', 'title', 'created_at', 'updated_at','create_user', 'parent', 'icon_id') 
 
 """
 メモ一覧取得
@@ -77,8 +77,6 @@ def post(request):
             # ログイン中のユーザーを作成者として登録
             memo = Memo(create_user=request.user)
             memo.title = request.data.get('title')
-            # 最初はcontentを仕様していたが削除
-            # memo.content = request.data.get('content')
             memo.created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.parent = request.data.get('parent')
@@ -111,7 +109,6 @@ def update(request, memo_id):
             if memo is None:
                 return HttpResponseBadRequest()
             memo.title = request.data.get('title')
-            memo.content = request.data.get('content')
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.save()
             response = {"id":memo.id}

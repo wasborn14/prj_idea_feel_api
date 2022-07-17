@@ -23,15 +23,14 @@ class SecondSubMemoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Memo
         fields = ['id', 'title']
-
 class FirstSubMemoListSerializer(serializers.ModelSerializer):
-    memo_list = SecondSubMemoListSerializer(many=True, read_only=True)
+    children = SecondSubMemoListSerializer(many=True, read_only=True)
     class Meta:
         model = Memo
-        fields = ['id', 'title', 'memo_list']
+        fields = ['id', 'title', 'children']
 
 class MemoListSerializer(serializers.ModelSerializer):
-    memo_list = FirstSubMemoListSerializer(many=True, read_only=True)
+    children = FirstSubMemoListSerializer(many=True, read_only=True)
     class Meta:
         model = Memo
-        fields = ['id', 'title', 'create_user', 'memo_list']
+        fields = ['id', 'title', 'create_user', 'children']

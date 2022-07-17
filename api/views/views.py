@@ -67,4 +67,4 @@ class MemoListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Memo.objects.filter(Q(parent__isnull=True) | Q(parent__exact=0))\
-            .filter(create_user=self.request.user.id).prefetch_related('memo_list')
+            .filter(create_user=self.request.user.id).prefetch_related('children')
