@@ -1,11 +1,13 @@
 from asyncio.log import logger
 from django.http import HttpResponseBadRequest, HttpResponseForbidden, JsonResponse, HttpResponse
+from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 from api.utils import login_check
 from api.models import Memo
 
-memo_fields = ('id', 'title', 'content', 'created_at', 'updated_at','create_user') 
+ZERO = 0
+memo_fields = ('id', 'title', 'created_at', 'updated_at','create_user', 'parent', 'icon_id') 
 
 """
 メモ一覧取得
@@ -14,15 +16,32 @@ param:request
 return:JsonResponse
 throws:HttpResponseForbidden
 """
-@api_view(['GET'])
-def index(request):
-    login_check(request)
-    # 作成者本人のメモのみ返す
-    memos = Memo.objects.all().filter(create_user=request.user.id).values(*memo_fields).order_by('created_at').reverse()
-    response = {"memoList":list(memos)}
-    if memos is None:
-        return JsonResponse([], safe=False)
-    return JsonResponse(response, safe=False)
+# @api_view(['GET'])
+# def index(request):
+#     login_check(request)
+#     # 作成者本人のメモのみ返す
+#     memo = Memo.objects.all().filter(id=35).values().first()
+#     children = memo.memo_set
+
+#     logger.debug('memo')
+#     # memos = memo.memo_set
+
+#     # memos = Memo.objects.all()
+#     # for memo in memos:
+#     #     for child in memos.memo_set.all():
+#     #         print(f'[{memo.id} {child.name}]')
+
+
+#     memos = Memo.objects.all().filter(create_user=request.user.id)\
+#     .filter(Q(parent_id__isnull=True) | Q(parent_id__exact=ZERO))\
+#     .select_related('memo').values()\
+#     .order_by('created_at').reverse()
+#     # logger.debug('memos',list(memos))
+#     response = {"memoList":list(memos)}
+#     # logger.debug('memos',response)
+#     if memos is None:
+#         return JsonResponse([], safe=False)
+#     return JsonResponse(memo, safe=False)
 
 """
 メモ詳細取得
@@ -58,9 +77,11 @@ def post(request):
             # ログイン中のユーザーを作成者として登録
             memo = Memo(create_user=request.user)
             memo.title = request.data.get('title')
-            memo.content = request.data.get('content')
             memo.created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+            memo.parent_id = request.data.get('parent_id')
+            # iconの変更は後に実装
+            # memo.icon_id = 1
             memo.save()
             response = {"id":memo.id}
             return JsonResponse(response)
@@ -88,7 +109,6 @@ def update(request, memo_id):
             if memo is None:
                 return HttpResponseBadRequest()
             memo.title = request.data.get('title')
-            memo.content = request.data.get('content')
             memo.updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
             memo.save()
             response = {"id":memo.id}

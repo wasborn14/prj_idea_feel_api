@@ -1,18 +1,36 @@
 
-from requests import request
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 from api.models import Memo
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from rest_framework.fields import CurrentUserDefault
 
-class MemoSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    create_user = serializers.ForeignKey(default=serializers.CurrentUserDefault())
+# class SubMemoListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title']
 
+# class MemoListSerializer(serializers.ModelSerializer):
+#     memo_list = SubMemoListSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title', 'memo_list']
+
+# class MemoSerializer(serializers.ModelSerializer):
+#     memo_list = MemoListSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = Memo
+#         fields = ['id', 'title', 'create_user', 'memo_list']
+
+class SecondSubMemoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Memo
-        fields = ('id', 'title', 'content', 'created_at', 'updated_at', 'create_user')
-        read_only_fields = ('id',)
+        fields = ['id', 'title']
+class FirstSubMemoListSerializer(serializers.ModelSerializer):
+    children = SecondSubMemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'children']
+
+class MemoListSerializer(serializers.ModelSerializer):
+    children = FirstSubMemoListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Memo
+        fields = ['id', 'title', 'create_user', 'children']

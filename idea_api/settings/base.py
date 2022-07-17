@@ -121,6 +121,12 @@ LOGGING = {
             'handlers': ['file'],
         },
     },
+    # 'loggers': {
+    #     'django.db.backends': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['file'],
+    #     },
+    # },
 }
 
 # Internationalization

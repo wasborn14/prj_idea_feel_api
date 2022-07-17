@@ -1,40 +1,43 @@
 from django.http import HttpResponseForbidden, JsonResponse
-from requests import Response
 from rest_framework.permissions import AllowAny
-from rest_framework import generics, viewsets, status
-from ..serializers import TaskSerializer, UserSerializer, PostSerializer
-from ..models import Task, Post, Memo
+from rest_framework import generics
+from api.serializers.memo_serializer import MemoListSerializer
+
+from api.serializers.serializers import UserSerializer
+from ..models import Memo
 from rest_framework.decorators import api_view
 from users.models import User
+from django.db.models import Q
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     # allowAny jwt認証なしに行える
     permission_classes = (AllowAny,)
 
-class PostListView(generics.ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (AllowAny,)
+# 元の設定内容
+# class PostListView(generics.ListAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#     permission_classes = (AllowAny,)
 
-class PostRetrieveView(generics.RetrieveAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (AllowAny,)
+# class PostRetrieveView(generics.RetrieveAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#     permission_classes = (AllowAny,)
 
-class TaskListView(generics.ListAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-    permission_classes = (AllowAny,)
+# class TaskListView(generics.ListAPIView):
+#     queryset = Task.objects.all()
+#     serializer_class = TaskSerializer
+#     permission_classes = (AllowAny,)
 
-class TaskRetrieveView(generics.RetrieveAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-    permission_classes = (AllowAny,)
+# class TaskRetrieveView(generics.RetrieveAPIView):
+#     queryset = Task.objects.all()
+#     serializer_class = TaskSerializer
+#     permission_classes = (AllowAny,)
 
-class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+# class TaskViewSet(viewsets.ModelViewSet):
+#     queryset = Task.objects.all()
+#     serializer_class = TaskSerializer
 
 def get_token(request):
     """
@@ -56,3 +59,12 @@ def index(request):
         "users": list(users)
     }
     return JsonResponse(list(data), safe=False)
+class MemoListView(generics.ListAPIView):
+    # prefetch_relatedがあればserializer複数なくても再帰的にできると思ったがうまくいっていないのでいらないかもしれない
+    # いずれこちらのようにできるか検討：https://qiita.com/sin_tanaka/items/1d5932fd8e393f432651
+    # queryset = Memo.objects.filter(Q(memos_id__isnull=True) | Q(memos_id__exact=0)).prefetch_related('memolist')
+    serializer_class = MemoListSerializer
+
+    def get_queryset(self):
+        return Memo.objects.filter(Q(parent__isnull=True) | Q(parent__exact=0))\
+            .filter(create_user=self.request.user.id).prefetch_related('children')
